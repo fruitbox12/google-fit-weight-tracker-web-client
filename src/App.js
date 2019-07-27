@@ -1,21 +1,38 @@
 import React from 'react';
 import './App.css';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import Backdrop from './Backdrop'
+import Login from './Login'
+import PrivateRoute from './PrivateRoute'
 
-import withAPI from './api';
+import { withApi } from './api'
 
-function App({ loading, signIn, signOut, authorized, authResponse, }) {
-  if (loading) {
-    return 'Loading...'
+const Dashboard = withApi(({ signOut }) => <div>  <button onClick={signOut}>Sign Out</button>Im a dashboard</div>);
+
+function App({ loading, ready }) {
+
+  if (!ready) {
+    return <Backdrop />
   }
 
   return (
-    <div className="App">
-      <button onClick={signIn}>Sign In</button>
-      <button onClick={signOut}>Sign Out</button>
-      You are {authorized ? 'Logged in' : 'Logged out'}
-      {JSON.stringify(authResponse, null, 2)}
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        {loading && <Backdrop />}
+        <Switch>
+          <PrivateRoute
+            exact
+            path="/"
+            component={Dashboard}
+          />
+          <Route
+            path="/login"
+            component={Login}
+          />
+        </Switch>
+      </div>
+    </BrowserRouter>
   );
 }
 
-export default withAPI(App);
+export default withApi(App);
