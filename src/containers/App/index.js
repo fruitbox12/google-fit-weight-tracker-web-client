@@ -1,13 +1,14 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import Backdrop from './Backdrop'
-import Login from './Login'
-import PrivateRoute from './PrivateRoute'
+import Backdrop from '../../components/Backdrop'
 
-import { withApi } from './api'
+import Login from '../Login'
+import PrivateRoute from '../PrivateRoute'
+import Dashboard from '../Dashboard'
 
-import Dashboard from './Dashboard'
+import { withApi } from '../../api'
+
 
 function App({ loading, ready }) {
 

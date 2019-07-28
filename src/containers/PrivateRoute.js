@@ -1,5 +1,5 @@
 import React from 'react'
-import { withApi } from './api'
+import { withApi } from '../api'
 import { Route, Redirect } from 'react-router-dom'
 
 const PrivateRoute = ({ component: Component, render, authorized, ...rest }) => {
