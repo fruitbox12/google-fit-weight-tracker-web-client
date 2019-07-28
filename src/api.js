@@ -236,9 +236,9 @@ export class ApiProvider extends React.Component {
     console.log('component loaded')
     this.props.api.initApi({
       onReady: () => this.setState({ loading: false, ready: true }),
-      onSignIn: (authResposne) => this.setState({
+      onSignIn: (authResponse) => this.setState({
         authorized: true,
-        authResposne,
+        authResponse,
         loading: false,
       }),
       onSignOut: () => this.setState({
