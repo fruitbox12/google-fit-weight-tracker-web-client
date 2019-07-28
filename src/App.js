@@ -1,13 +1,25 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Backdrop from './Backdrop'
 import Login from './Login'
 import PrivateRoute from './PrivateRoute'
 
 import { withApi } from './api'
 
-const Dashboard = withApi(({ signOut }) => <div>  <button onClick={signOut}>Sign Out</button>Im a dashboard</div>);
+import Button from 'react-bootstrap/Button'
+
+const Dashboard = withApi(({ signOut, getBodyWeights, getAvailableDataSources, addBodyWeight }) => {
+
+
+  return <div>
+    <Button onClick={signOut}>Sign Out</Button>
+    Im a dashboard
+    <Button onClick={getBodyWeights}>Get Data</Button>
+    <Button onClick={getAvailableDataSources}>Get Data Sources</Button>
+    <Button onClick={addBodyWeight}>Add Data</Button>
+  </div>
+});
 
 function App({ loading, ready }) {
 

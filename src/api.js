@@ -1,4 +1,5 @@
 import React from 'react'
+import * as dataParser from './dataParser'
 
 export default class API {
   clientID = '117622503236-k4ap9icujnjmfct4p19cg3shci9slu85.apps.googleusercontent.com'
@@ -95,6 +96,37 @@ export default class API {
       method,
     }
   )
+
+  getAvailableDataSources = () => {
+    return this.request({
+      path: 'fitness/v1/users/me/dataSources',
+      method: 'GET'
+    })
+  }
+
+  getBodyWeights = () => {
+    // Find more data source IDs at https://developers.google.com/apis-explorer/#search/fitness.users.datasources.list/m/fitness/v1/fitness.users.dataSources.list
+    const endTimeMillis = new Date().getTime();
+    const weekInMillis = 1000 * 60 * 60 * 24 * 7
+    const startTimeMillis = endTimeMillis - weekInMillis;
+    const dataSourceId = 'derived:com.google.weight:com.google.android.gms:merge_weight'
+
+    const requestBody = {
+      aggregateBy: [
+        {
+          dataSourceId,
+        },
+      ],
+      endTimeMillis,
+      startTimeMillis,
+    }
+
+    return this.request({
+      path: 'fitness/v1/users/me/dataset:aggregate',
+      body: requestBody,
+      method: 'POST',
+    }).then(res => res.result)
+  }
 }
 
 const ApiContext = React.createContext('api')
@@ -119,6 +151,45 @@ export class ApiProvider extends React.Component {
       })
       this.props.api.signOut()
     },
+
+    getAvailableDataSources: () => {
+      this.setState({
+        loading: true
+      })
+
+      return this.props.api.getAvailableDataSources().then(res => {
+        this.setState({ loading: false })
+      }).catch(err => {
+        this.setState({ loading: false })
+        throw err
+      })
+    },
+
+    getBodyWeights: () => {
+      this.setState({
+        loading: true,
+      })
+
+      return this.props.api.getBodyWeights().then(res => {
+        this.setState({ loading: false })
+        return dataParser.extractWeightPoints(res)
+      }).catch(err => {
+        this.setState({ loading: false })
+        // An empty response is an error for some reason, ignore errors.
+        // throw err
+      })
+    },
+
+    addBodyWeight: (params) => {
+      this.setState({
+        loading: true,
+      })
+
+      return this.props.api.addBodyWeight(params).then(res => {
+        console.log(res)
+        this.setState({ loading: false })
+      })
+    }
   }
 
   componentDidMount() {
