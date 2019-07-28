@@ -104,11 +104,10 @@ export default class API {
     })
   }
 
-  getBodyWeights = () => {
+  getBodyWeights = ({
+    startTimeMillis, endTimeMillis, bucketByMillis,
+  }) => {
     // Find more data source IDs at https://developers.google.com/apis-explorer/#search/fitness.users.datasources.list/m/fitness/v1/fitness.users.dataSources.list
-    const endTimeMillis = new Date().getTime();
-    const weekInMillis = 1000 * 60 * 60 * 24 * 7
-    const startTimeMillis = endTimeMillis - weekInMillis;
     const dataSourceId = 'derived:com.google.weight:com.google.android.gms:merge_weight'
 
     const requestBody = {
@@ -117,6 +116,9 @@ export default class API {
           dataSourceId,
         },
       ],
+      bucketByTime: {
+        durationMillis: bucketByMillis,
+      },
       endTimeMillis,
       startTimeMillis,
     }
@@ -125,7 +127,10 @@ export default class API {
       path: 'fitness/v1/users/me/dataset:aggregate',
       body: requestBody,
       method: 'POST',
-    }).then(res => res.result)
+    }).then(res => {
+      console.log(res)
+      return res.result
+    })
   }
 }
 
@@ -165,16 +170,51 @@ export class ApiProvider extends React.Component {
       })
     },
 
-    getBodyWeights: () => {
+    getBodyWeights: (duration) => {
       this.setState({
         loading: true,
       })
 
-      return this.props.api.getBodyWeights().then(res => {
+      let bucketByMillis
+      const endTimeMillis = new Date().getTime();
+      let startTimeMillis
+      switch (duration) {
+        case 'hourly':
+          bucketByMillis = 1000 * 60 * 60
+          const dayInMillis = 1000 * 60 * 60 * 24
+          startTimeMillis = endTimeMillis - dayInMillis;
+          break;
+        case 'weekly':
+          bucketByMillis = 1000 * 60 * 60 * 24 * 7
+          const threeMonthsInMillis = 1000 * 60 * 60 * 24 * 30 * 3
+          startTimeMillis = endTimeMillis - threeMonthsInMillis;
+          break;
+        default:
+          // case 'daily':
+          const weekInMillis = 1000 * 60 * 60 * 24 * 7
+          startTimeMillis = endTimeMillis - weekInMillis;
+          bucketByMillis = 1000 * 60 * 60 * 24
+      }
+
+      return this.props.api.getBodyWeights({
+        startTimeMillis,
+        endTimeMillis,
+        bucketByMillis,
+      }).then(res => {
         this.setState({ loading: false })
-        return dataParser.extractWeightPoints(res)
+        console.log(res)
+        return {
+          start: startTimeMillis,
+          end: endTimeMillis,
+          points: dataParser.extractWeightPoints(res)
+        }
       }).catch(err => {
         this.setState({ loading: false })
+        return {
+          start: startTimeMillis,
+          end: endTimeMillis,
+          points: [],
+        }
         // An empty response is an error for some reason, ignore errors.
         // throw err
       })

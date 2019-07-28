@@ -7,19 +7,7 @@ import PrivateRoute from './PrivateRoute'
 
 import { withApi } from './api'
 
-import Button from 'react-bootstrap/Button'
-
-const Dashboard = withApi(({ signOut, getBodyWeights, getAvailableDataSources, addBodyWeight }) => {
-
-
-  return <div>
-    <Button onClick={signOut}>Sign Out</Button>
-    Im a dashboard
-    <Button onClick={getBodyWeights}>Get Data</Button>
-    <Button onClick={getAvailableDataSources}>Get Data Sources</Button>
-    <Button onClick={addBodyWeight}>Add Data</Button>
-  </div>
-});
+import Dashboard from './Dashboard'
 
 function App({ loading, ready }) {
 
