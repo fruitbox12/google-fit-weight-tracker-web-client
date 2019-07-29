@@ -2,7 +2,7 @@
 
 This app uses the google fitness v1 rest API to store weight data.
 
-To make your own app you will need a google cloud account and create your own credentials.
+To make your own app you will need a google cloud account and create your own credentials. See here: https://developers.google.com/fit/rest/v1/get-started
 
 This repo will use my person oauth client ID for demonstration purposes.
 

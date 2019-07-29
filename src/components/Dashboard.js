@@ -143,7 +143,7 @@ const Dashboard = ({
 
       </Row>
 
-      <Button onClick={() => addBodyWeight(50)}>Add New Entry</Button>
+      <Button onClick={addBodyWeight}>Add New Entry</Button>
     </Container>
   )
 }
