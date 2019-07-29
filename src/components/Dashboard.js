@@ -126,9 +126,10 @@ const Dashboard = ({
                       return 0
                     })
                     .map(point => {
-                      return <tr> <td>
-                        {new Date(Number(point.time)).toLocaleDateString()}
-                      </td>
+                      return <tr key={point.time}>
+                        <td>
+                          {new Date(Number(point.time)).toLocaleDateString()}
+                        </td>
                         <td>
                           {point.value}
                         </td>
@@ -141,7 +142,7 @@ const Dashboard = ({
 
       </Row>
 
-      <Button onClick={addBodyWeight}>Add New Entry</Button>
+      <Button onClick={() => addBodyWeight(50)}>Add New Entry</Button>
     </Container>
   )
 }

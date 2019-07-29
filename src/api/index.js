@@ -98,6 +98,7 @@ export default class API {
   )
 
   // List all dataSource for user that write body weight, find indus-health data source.
+  // Find more data source IDs at https://developers.google.com/apis-explorer/#search/fitness.users.datasources.list/m/fitness/v1/fitness.users.dataSources.list
   getAvailableDataSources = () => {
     return this.request({
       path: 'fitness/v1/users/me/dataSources?dataTypeName=com.google.weight',
@@ -106,6 +107,7 @@ export default class API {
   }
 
   // Register this app as a data source so we can create and read manual entries isolated from other google fit data
+  // To explore: https://developers.google.com/apis-explorer/#search/fitness/fitness/v1/fitness.users.dataSources.create
   registerAppAsDataSource = () => {
     return this.request({
       path: 'fitness/v1/users/me/dataSources',
@@ -131,16 +133,14 @@ export default class API {
           "version": "1.0.0"
         },
         "type": "raw",
-        // "dataStreamId": "raw:com.google.weight:292824132082:web:123456:90cx0v87xc90vz7cxv897zxv9"
-        //  raw:com.google.weight:117622503236:web:123456:90cx0v87xc90vz7cxv897zxv9
       }
     })
   }
 
+  // Explore api: https://developers.google.com/apis-explorer/#search/fitness.users.dataset.aggregate/m/fitness/v1/fitness.users.dataset.aggregate
   getBodyWeights = ({
     startTimeMillis, endTimeMillis, bucketByMillis, dataStreamId,
   }) => {
-    // Find more data source IDs at https://developers.google.com/apis-explorer/#search/fitness.users.datasources.list/m/fitness/v1/fitness.users.dataSources.list
     const requestBody = {
       aggregateBy: [
         {
@@ -161,6 +161,38 @@ export default class API {
     }).then(res => {
       console.log(res)
       return res.result
+    })
+  }
+
+  // To explore api: https://developers.google.com/apis-explorer/#search/fitness.users.datasources.datasets.patch/m/fitness/v1/fitness.users.dataSources.datasets.patch
+  addBodyWeight = ({
+    dataSourceId, weightKg
+  }) => {
+    const timeNowNs = new Date().getTime() * 1000000
+
+    const body = {
+      dataSourceId,
+      "maxEndTimeNs": timeNowNs,
+      "minStartTimeNs": timeNowNs,
+      "point": [
+        {
+          "dataTypeName": "com.google.weight",
+          "endTimeNanos": timeNowNs,
+          "startTimeNanos": timeNowNs,
+          "value": [
+            {
+              "fpVal": weightKg
+            }
+          ]
+        }
+      ]
+    }
+    const path = encodeURI(`fitness/v1/users/me/dataSources/${dataSourceId}/datasets/${timeNowNs}-${timeNowNs}`)
+
+    return this.request({
+      path,
+      body,
+      method: 'PATCH'
     })
   }
 }
@@ -278,12 +310,15 @@ export class ApiProvider extends React.Component {
       })
     },
 
-    addBodyWeight: (params) => {
+    addBodyWeight: (weightKg) => {
       this.setState({
         loading: true,
       })
 
-      return this.props.api.addBodyWeight(params).then(res => {
+      return this.props.api.addBodyWeight({
+        weightKg,
+        dataSourceId: this.state.dataStreamId,
+      }).then(res => {
         console.log(res)
         this.setState({ loading: false })
       })

@@ -16,6 +16,10 @@ class Dashboard extends React.Component {
     })
   }
 
+  initFitnessApiConnection = () => {
+    return this.props.initFitnessApiConnection()
+  }
+
   getWeightData = (duration) => {
     this.setState({
       duration,
@@ -25,18 +29,20 @@ class Dashboard extends React.Component {
     })
   }
 
-  initFitnessApiConnection = () => {
-    return this.props.initFitnessApiConnection()
+  addBodyWeight = (weightKg) => {
+    this.props.addBodyWeight(weightKg).then(() => {
+      this.getWeightData(this.state.duration)
+    })
   }
 
   render() {
-    const { signOut, addBodyWeight } = this.props
+    const { signOut } = this.props
     return <DashboardView
       points={this.state.points}
       signOut={signOut}
       getWeightData={this.getWeightData}
       duration={this.state.duration}
-      addBodyWeight={addBodyWeight}
+      addBodyWeight={this.addBodyWeight}
     />
   }
 };
