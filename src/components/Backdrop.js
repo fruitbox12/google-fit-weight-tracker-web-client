@@ -9,11 +9,14 @@ const backdropStyle = {
   left: 0,
   right: 0,
   backgroundColor: '#000',
-  opacity: 0.5
+  opacity: 0.5,
+  display: 'flex',
+  'justifyContent': 'center',
+  'alignItems': 'center',
 };
 
 export default () => <div style={backdropStyle}>
-  <Spinner animation="border" role="status" style={{ zIndex: 1041, position: 'fixed', top: '50%', right: '50%', width: '100px', height: '100px' }}>
+  <Spinner animation="border" role="status" style={{ zIndex: 1041, width: '100px', height: '100px' }}>
     <span className="sr-only">Loading...</span>
   </Spinner>
 </div>

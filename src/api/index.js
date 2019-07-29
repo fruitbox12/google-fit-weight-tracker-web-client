@@ -278,6 +278,11 @@ export class ApiProvider extends React.Component {
           const threeMonthsInMillis = 1000 * 60 * 60 * 24 * 30 * 3
           startTimeMillis = endTimeMillis - threeMonthsInMillis;
           break;
+        case 'minutely':
+          bucketByMillis = 1000 * 60
+          const oneHourMillis = 1000 * 60 * 60
+          startTimeMillis = endTimeMillis - oneHourMillis;
+          break;
         default:
           // case 'daily':
           const weekInMillis = 1000 * 60 * 60 * 24 * 7

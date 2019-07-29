@@ -18,7 +18,7 @@ const Dashboard = ({
 
   let dataPoints = points.map(dataPoint => dataPoint.value)
   let labels = points.map(dataPoint => {
-    if (duration === 'hourly') {
+    if (duration === 'hourly' || duration === 'minutely') {
       let date = new Date(Number(dataPoint.time))
       return `${date.toLocaleTimeString()}`
     }
@@ -57,17 +57,14 @@ const Dashboard = ({
 
   return (
     <Container>
+      <Button style={{ position: 'fixed', top: 0, right: 0 }} onClick={signOut} variant="danger">Sign Out</Button>
       <Row>
-        <Col>
-          <Button onClick={signOut} variant="danger">Sign Out</Button>
-        </Col>
-
+        <h1>Weight Tracker</h1>
       </Row>
-
       <Row>
         <Col md={{ span: 8, offset: 2 }} xs={12}>
           History Duration:
-          {['weekly', 'daily', 'hourly'].map(period => {
+          {['weekly', 'daily', 'hourly', 'minutely'].map(period => {
             return <Button
               key={period}
               variant={duration === period ? 'outline-primary' : 'primary'}
@@ -81,6 +78,8 @@ const Dashboard = ({
                     return '1 Week'
                   case 'hourly':
                     return '1 Day'
+                  case 'minutely':
+                    return '1 Hour'
                   default:
                     return 'na';
                 }
