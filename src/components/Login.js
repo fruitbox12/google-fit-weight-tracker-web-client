@@ -4,6 +4,7 @@ import Logo from '../logo.png'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
 
 const Login = ({ signIn }) => <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
   <Row>
@@ -11,7 +12,7 @@ const Login = ({ signIn }) => <Container style={{ display: 'flex', justifyConten
       <img src={Logo} alt="logo" />
     </Col>
     <Col xs={12}>
-      <button onClick={signIn}>Sign In</button>
+      <Button onClick={signIn}>Sign In</Button>
     </Col>
   </Row>
 </Container>
