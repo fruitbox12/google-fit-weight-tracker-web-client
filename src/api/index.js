@@ -2,7 +2,7 @@ import React from 'react'
 import * as dataParser from './dataParser'
 
 export default class API {
-  clientID = '117622503236-k4ap9icujnjmfct4p19cg3shci9slu85.apps.googleusercontent.com'
+  clientID = process.env.REACT_APP_GOOGLE_API_CLIENT_ID
   jsclientURL = 'https://apis.google.com/js/api.js'
   discoveryDocs = [
     'https://www.googleapis.com/discovery/v1/apis/fitness/v1/rest',
@@ -125,6 +125,7 @@ export default class API {
           ],
           "name": "com.google.weight"
         },
+        // This is a dirty way to get a data source into a user's fitness datastore quickly. Ideally you would track actual device data and store it in your own database to find a user's dataStreamID.
         "device": {
           "manufacturer": "web",
           "model": "123456",
@@ -158,9 +159,6 @@ export default class API {
       path: 'fitness/v1/users/me/dataset:aggregate',
       body: requestBody,
       method: 'POST',
-    }).then(res => {
-      console.log(res)
-      return res.result
     })
   }
 
@@ -221,6 +219,7 @@ export class ApiProvider extends React.Component {
       this.props.api.signOut()
     },
 
+    // Register the app
     initFitnessApiConnection: () => {
       this.setState({
         loading: true
@@ -228,7 +227,7 @@ export class ApiProvider extends React.Component {
 
       return this.props.api.getAvailableDataSources().then(res => {
         this.setState({ loading: false })
-        let device = res.result.dataSource.find(dataSource => dataSource.device && dataSource.device.uid === '90cx0v87xc90vz7cxv897zxv9')
+        let device = dataParser.extractDeviceFromSources(res.result)
 
         if (device) {
           this.setState({
@@ -297,11 +296,10 @@ export class ApiProvider extends React.Component {
         dataStreamId: this.state.dataStreamId,
       }).then(res => {
         this.setState({ loading: false })
-        console.log(res)
         return {
           start: startTimeMillis,
           end: endTimeMillis,
-          points: dataParser.extractWeightPoints(res)
+          points: dataParser.extractWeightPoints(res.result)
         }
       }).catch(err => {
         this.setState({ loading: false })
@@ -324,7 +322,6 @@ export class ApiProvider extends React.Component {
         weightKg,
         dataSourceId: this.state.dataStreamId,
       }).then(res => {
-        console.log(res)
         this.setState({ loading: false })
       })
     }

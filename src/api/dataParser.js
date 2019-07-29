@@ -13,3 +13,8 @@ export const extractWeightPoints = (rawData) => {
     value: rawDataPoint.dataset[0].point[0] && rawDataPoint.dataset[0].point[0].value[0].fpVal
   }))
 }
+
+export const extractDeviceFromSources = (rawData) => {
+  // Hacky way of getting a user's datastreamID.
+  return rawData.dataSource.find(dataSource => dataSource.device && dataSource.device.uid === '90cx0v87xc90vz7cxv897zxv9')
+}

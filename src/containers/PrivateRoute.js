@@ -8,7 +8,6 @@ const PrivateRoute = ({ component: Component, render, authorized, ...rest }) => 
       {...rest}
       render={props => {
         if (authorized) {
-          console.log('Return private component')
           if (Component) {
             return <Component {...props} />
           }

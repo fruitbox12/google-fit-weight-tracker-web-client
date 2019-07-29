@@ -8,6 +8,8 @@ import Col from 'react-bootstrap/Col'
 import Table from 'react-bootstrap/Table'
 import { Line } from 'react-chartjs-2';
 
+import Logo from '../logo.png'
+
 const Dashboard = ({
   signOut,
   getWeightData,
@@ -59,7 +61,7 @@ const Dashboard = ({
     <Container>
       <Button style={{ position: 'fixed', top: 0, right: 0 }} onClick={signOut} variant="danger">Sign Out</Button>
       <Row>
-        <h1>Weight Tracker</h1>
+        <img style={{ height: '50px' }} src={Logo} alt="logo" /> <h1>Weight Tracker</h1>
       </Row>
       <Row>
         <Col md={{ span: 8, offset: 2 }} xs={12}>
