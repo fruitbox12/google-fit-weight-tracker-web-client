@@ -97,23 +97,54 @@ export default class API {
     }
   )
 
+  // List all dataSource for user that write body weight, find indus-health data source.
   getAvailableDataSources = () => {
     return this.request({
-      path: 'fitness/v1/users/me/dataSources',
+      path: 'fitness/v1/users/me/dataSources?dataTypeName=com.google.weight',
       method: 'GET'
     })
   }
 
+  // Register this app as a data source so we can create and read manual entries isolated from other google fit data
+  registerAppAsDataSource = () => {
+    return this.request({
+      path: 'fitness/v1/users/me/dataSources',
+      method: 'POST',
+      body: {
+        "application": {
+          "name": "indus-health"
+        },
+        "dataType": {
+          "field": [
+            {
+              "format": "floatPoint",
+              "name": "weight"
+            }
+          ],
+          "name": "com.google.weight"
+        },
+        "device": {
+          "manufacturer": "web",
+          "model": "123456",
+          "type": "phone",
+          "uid": "90cx0v87xc90vz7cxv897zxv9",
+          "version": "1.0.0"
+        },
+        "type": "raw",
+        // "dataStreamId": "raw:com.google.weight:292824132082:web:123456:90cx0v87xc90vz7cxv897zxv9"
+        //  raw:com.google.weight:117622503236:web:123456:90cx0v87xc90vz7cxv897zxv9
+      }
+    })
+  }
+
   getBodyWeights = ({
-    startTimeMillis, endTimeMillis, bucketByMillis,
+    startTimeMillis, endTimeMillis, bucketByMillis, dataStreamId,
   }) => {
     // Find more data source IDs at https://developers.google.com/apis-explorer/#search/fitness.users.datasources.list/m/fitness/v1/fitness.users.dataSources.list
-    const dataSourceId = 'derived:com.google.weight:com.google.android.gms:merge_weight'
-
     const requestBody = {
       aggregateBy: [
         {
-          dataSourceId,
+          dataSourceId: dataStreamId,
         },
       ],
       bucketByTime: {
@@ -142,6 +173,7 @@ export class ApiProvider extends React.Component {
     loading: true,
     authorized: false,
     authResponse: null,
+    dataStreamId: '',
 
     signIn: () => {
       this.setState({
@@ -157,13 +189,38 @@ export class ApiProvider extends React.Component {
       this.props.api.signOut()
     },
 
-    getAvailableDataSources: () => {
+    initFitnessApiConnection: () => {
       this.setState({
         loading: true
       })
 
       return this.props.api.getAvailableDataSources().then(res => {
         this.setState({ loading: false })
+        let device = res.result.dataSource.find(dataSource => dataSource.device && dataSource.device.uid === '90cx0v87xc90vz7cxv897zxv9')
+
+        if (device) {
+          this.setState({
+            dataStreamId: device.dataStreamId,
+          })
+          return device.dataStreamId
+        }
+
+        return this.registerAppAsDataSource()
+      }).catch(err => {
+        this.setState({ loading: false })
+        throw err
+      })
+    },
+
+
+    registerAppAsDataSource: () => {
+      this.setState({
+        loading: true,
+      })
+
+      return this.props.api.registerAppAsDataSource().then(res => {
+        this.setState({ loading: false, dataStreamId: res.result.dataStreamId })
+        return res.result.dataStreamId
       }).catch(err => {
         this.setState({ loading: false })
         throw err
@@ -200,6 +257,7 @@ export class ApiProvider extends React.Component {
         startTimeMillis,
         endTimeMillis,
         bucketByMillis,
+        dataStreamId: this.state.dataStreamId,
       }).then(res => {
         this.setState({ loading: false })
         console.log(res)

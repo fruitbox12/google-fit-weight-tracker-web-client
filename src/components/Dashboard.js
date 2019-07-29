@@ -110,6 +110,11 @@ const Dashboard = ({
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td>
+                    {points.filter(point => point.value).length === 0 && 'No entries, add one now!'}
+                  </td>
+                </tr>
                 {
                   points
                     .filter(point => point.value)

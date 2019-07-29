@@ -11,7 +11,9 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.getWeightData('weekly')
+    this.initFitnessApiConnection().then(() => {
+      this.getWeightData('weekly')
+    })
   }
 
   getWeightData = (duration) => {
@@ -21,6 +23,10 @@ class Dashboard extends React.Component {
     this.props.getBodyWeights(duration).then(weightData => {
       this.setState(weightData)
     })
+  }
+
+  initFitnessApiConnection = () => {
+    return this.props.initFitnessApiConnection()
   }
 
   render() {
