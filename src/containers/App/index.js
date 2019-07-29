@@ -17,7 +17,7 @@ function App({ loading, ready }) {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.REACT_APP_BASE_NAME}>
       <div className="App">
         {loading && <Backdrop />}
         <Switch>
