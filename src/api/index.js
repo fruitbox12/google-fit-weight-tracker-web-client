@@ -235,7 +235,7 @@ export class ApiProvider extends React.Component {
           return dataSource.dataStreamId
         }
 
-        return this.registerAppAsDataSource()
+        return this.props.api.registerAppAsDataSource()
       }).catch(err => {
         this.setState({ loading: false })
         throw err
