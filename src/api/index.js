@@ -79,7 +79,6 @@ export default class API {
     this.onSignOut()
   }
 
-
   signIn = () => {
     window.gapi.auth2.getAuthInstance().signIn()
   }
@@ -205,14 +204,14 @@ export class ApiProvider extends React.Component {
     authResponse: null,
     dataStreamId: '',
 
-    signIn: () => {
+    handleSignIn: () => {
       this.setState({
         loading: true,
       })
       this.props.api.signIn()
     },
 
-    signOut: () => {
+    handleSignOut: () => {
       this.setState({
         loading: true,
       })
@@ -227,13 +226,13 @@ export class ApiProvider extends React.Component {
 
       return this.props.api.getAvailableDataSources().then(res => {
         this.setState({ loading: false })
-        let device = dataParser.extractDeviceFromSources(res.result)
+        let dataSource = dataParser.findDataSource(res.result)
 
-        if (device) {
+        if (dataSource) {
           this.setState({
-            dataStreamId: device.dataStreamId,
+            dataStreamId: dataSource.dataStreamId,
           })
-          return device.dataStreamId
+          return dataSource.dataStreamId
         }
 
         return this.registerAppAsDataSource()

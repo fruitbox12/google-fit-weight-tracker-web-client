@@ -4,12 +4,12 @@ import { withApi } from '../api'
 
 import LoginView from '../components/Login'
 
-const Login = ({ location, signIn, authorized }) => {
+const Login = ({ location, handleSignIn, authorized }) => {
   if (authorized) {
     return <Redirect to={location.state || { pathname: "/" }} />
   }
 
-  return <LoginView signIn={signIn} />
+  return <LoginView handleSignin={handleSignIn} />
 }
 
 export default withApi(Login)

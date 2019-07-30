@@ -11,7 +11,7 @@ import { Line } from 'react-chartjs-2';
 import Logo from '../logo.png'
 
 const Dashboard = ({
-  signOut,
+  handleSignOut,
   getWeightData,
   points,
   duration,
@@ -59,7 +59,7 @@ const Dashboard = ({
 
   return (
     <Container>
-      <Button style={{ position: 'fixed', top: 0, right: 0 }} onClick={signOut} variant="danger">Sign Out</Button>
+      <Button style={{ position: 'fixed', top: 0, right: 0 }} onClick={handleSignOut} variant="danger">Sign Out</Button>
       <Row>
         <img style={{ height: '50px' }} src={Logo} alt="logo" /> <h1>Weight Tracker</h1>
       </Row>

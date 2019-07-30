@@ -14,7 +14,7 @@ export const extractWeightPoints = (rawData) => {
   }))
 }
 
-export const extractDeviceFromSources = (rawData) => {
+export const findDataSource = (rawData) => {
   // Hacky way of getting a user's datastreamID.
   return rawData.dataSource.find(dataSource => dataSource.device && dataSource.device.uid === '90cx0v87xc90vz7cxv897zxv9')
 }

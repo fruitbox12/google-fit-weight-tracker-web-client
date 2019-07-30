@@ -4,6 +4,7 @@ import { withApi } from '../api'
 
 import DashboardView from '../components/Dashboard'
 import AddWeightModal from '../components/AddWeightModal'
+
 class Dashboard extends React.Component {
   state = {
     points: [],
@@ -59,11 +60,11 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { signOut, loading } = this.props
+    const { handleSignOut, loading } = this.props
     return <div>
       <DashboardView
         points={this.state.points}
-        signOut={signOut}
+        handleSignOut={handleSignOut}
         getWeightData={this.getWeightData}
         duration={this.state.duration}
         addBodyWeight={this.handleOpenModal}
