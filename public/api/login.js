@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
     });
   });
 
-  const { userId } = body;
+  const { userId } = body.id;
   const secretKey = 'your_secret_key'; // Replace this with your actual secret key
 
   if (req.method === 'POST') {
