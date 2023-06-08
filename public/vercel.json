@@ -1,5 +1,8 @@
 {
   "routes": [
-    { "src": "/api/login", "dest": "pages/api/login.js" }
+    { "src": "/api/login", "headers": {
+        "Access-Control-Allow-Origin": "https://upgoaled.vercel.app",
+        "Access-Control-Allow-Methods": "GET,OPTIONS"
+      },"dest": "/api/login.js" }
   ]
 }
