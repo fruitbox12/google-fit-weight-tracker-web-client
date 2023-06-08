@@ -32,14 +32,12 @@ module.exports = async (req, res) => {
     userId = body.userId;
   } else if (req.method === 'GET') {
     // Get userId from query parameters for GET requests
-    userId = req.query.userId;
+    userId = "app";
   }
 
   const secretKey = 'your_secret_key'; // Replace this with your actual secret key
 
-  if (!userId) {
-    return res.status(400).json({ error: 'Invalid request' });
-  }
+
 
   const token = jwt.sign({ id: userId }, secretKey, {
     expiresIn: '1h', // token will expire in 1 hour
