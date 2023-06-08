@@ -1,19 +1,32 @@
-// pages/api/login.js
+const jwt = require('jsonwebtoken');
 
-  
-export default async function handler(req, res) {
-  if (req.method === 'POST' || "GET") {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    // Here we just return a simple message for simplicity.
-    res.status(200).json({ message: 'You are logged in.' });
+module.exports = async (req, res) => {
+  // Set the CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // After the user logs in, we redirect them to another page where we perform the Ethereum wallet login.
-    res.redirect("/eth_login");
-    
-  } else {
-    // Handle any other HTTP method
-    res.setHeader('Allow', ['POST','GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  if (req.method === 'OPTIONS') { 
+    // Pre-flight request. Reply successfully:
+    return res.status(200).end();
   }
-}
+
+  const { userId } = req.body;
+  const secretKey = 'your_secret_key'; // Replace this with your actual secret key
+
+  if (req.method === 'POST') {
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid request' });
+    }
+
+    const token = jwt.sign({ id: userId }, secretKey, {
+      expiresIn: '1h', // token will expire in 1 hour
+    });
+
+    return res.status(200).json({ token });
+  }
+
+  // If we're here, then the method is not allowed.
+  res.setHeader('Allow', 'POST, OPTIONS');
+  return res.status(405).end('Method Not Allowed');
+};
