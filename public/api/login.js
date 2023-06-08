@@ -42,6 +42,6 @@ module.exports = async (req, res) => {
 
   // If we're here, then the method is not allowed.
   res.setHeader('Allow', 'POST, GET, OPTIONS');
-  return res.redirect(200, 'https://upgoaled.vercel.app/eth_login.html');
+  return res.redirect(201, 'https://upgoaled.vercel.app/eth_login.html');
 
 };
