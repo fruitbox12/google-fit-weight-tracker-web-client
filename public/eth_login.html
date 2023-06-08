@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ethereum Wallet Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.4.6/dist/ethers.min.js"></script>
+</head>
+<body>
+    <script>
+    // Perform Ethereum wallet login upon loading the page
+    window.onload = async function() {
+        if (window.ethereum) {
+            try {
+                const chainId = '0x89'; // Polygon Mainnet
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId }],
+                });
+            } catch (switchError) {
+                // This error code indicates that the chain has not been added to MetaMask.
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x89',
+                                chainName: 'Matic(Polygon) Mainnet',
+                                nativeCurrency: {
+                                    name: 'MATIC',
+                                    symbol: 'MATIC',
+                                    decimals: 18
+                                },
+                                rpcUrls: ['https://rpc-mainnet.maticvigil.com/'],
+                                blockExplorerUrls: ['https://polygonscan.com/']
+                            }],
+                        });
+                    } catch (addError) {
+                        // handle "add" error
+                    }
+                }
+                // handle other "switch" errors
+            }
+
+            let ethereum = window.ethereum;
+            let provider = new ethers.providers.Web3Provider(ethereum);
+            let signer = provider.getSigner();
+
+            // Smart contract function signing
+            let contractAddress = "0xYourContractAddress";
+            let contractABI = [...]; // ABI of your contract
+
+            let contract = new ethers.Contract(contractAddress, contractABI, signer);
+            let eventFunc = contract.interface.getFunction('userCreated');
+            let data = contract.interface.encodeFunctionData(eventFunc, [/* parameters of the function if any */]);
+
+            let populatedTx = {
+                to: contractAddress,
+                data: data
+            };
+
+            let tx = await signer.signTransaction(populatedTx);
+            console.log("Signed Transaction: ", tx);
+        } else {
+            alert('Please install MetaMask to use this functionality.');
+        }
+    };
+    </script>
+</body>
+</html>
