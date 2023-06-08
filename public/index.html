@@ -21,43 +21,17 @@
   <script src="loadLibraries.js" type="application/javascript"></script>
 </head>
 <body>
-  <div class="w-users-userformpagewrap">
-    <div class="w-users-usersignupformwrapper">
-      <form method="post" data-wf-user-form-type="signup">
-        <div class="w-users-userformheader">
-        </div>
-        <div id="g_id_onload"
-             data-client_id="72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-nonce="replace_with_your_nonce_value"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin" data-type="standard"></div>
-      </form>
-    </div>
-  </div>
-  <script>
-    // add your JavaScript logic to handle the credential response
-    function handleCredentialResponse(response) {
-      // use the response.getBackchannelToken() to get the response token
-      // then send the token to your backend to verify and handle the user login
-    }
-    
-    // add a callback to handle the sign-in process
-    function start() {
-      gapi.load('auth2', function() {
-        auth2 = gapi.auth2.init({
-          client_id: '72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com',
-          fetch_basic_profile: false,
-          scope: 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.activity.write https://www.googleapis.com/auth/fitness.blood_glucose.read https://www.googleapis.com/auth/fitness.blood_glucose.write https://www.googleapis.com/auth/fitness.blood_pressure.read https://www.googleapis.com/auth/fitness.blood_pressure.write https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.body.write'
-        });
-        // Sign the user in, and then retrieve their ID.
-        auth2.signIn().then(function() {
-          console.log(auth2.currentUser.get().getId());
-        });
-      });
-    }
-  </script>
+<button id="login">Log in with Google</button>
+
+    <script>
+    document.getElementById('login').onclick = function() {
+        var client_id = '72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com';
+        var redirect_uri = 'https://Upgoaled.vercel.app';
+        var scope = 'https://www.googleapis.com/auth/fitness.activity.read%20https://www.googleapis.com/auth/fitness.activity.write%20https://www.googleapis.com/auth/fitness.blood_glucose.read%20https://www.googleapis.com/auth/fitness.blood_glucose.write%20https://www.googleapis.com/auth/fitness.blood_pressure.read%20https://www.googleapis.com/auth/fitness.blood_pressure.write%20https://www.googleapis.com/auth/fitness.body.read%20https://www.googleapis.com/auth/fitness.body.write%20https://www.googleapis.com/auth/fitness.body_temperature.read%20https://www.googleapis.com/auth/fitness.body_temperature.write%20https://www.googleapis.com/auth/fitness.location.read%20https://www.googleapis.com/auth/fitness.location.write%20https://www.googleapis.com/auth/fitness.nutrition.read%20https://www.googleapis.com/auth/fitness.nutrition.write%20https://www.googleapis.com/auth/fitness.oxygen_saturation.read%20https://www.googleapis.com/auth/fitness.oxygen_saturation.write%20https://www.googleapis.com/auth/fitness.reproductive_health.read%20https://www.googleapis.com/auth/fitness.reproductive_health.write';
+        var url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${scope}&response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}`;
+        window.location.href = url;
+    };
+    </script>
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/build/three-min.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/examples/js/SimplexNoise.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/threex.terrain.js'></script>
