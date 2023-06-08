@@ -1,68 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ethereum Wallet Login</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.4.6/dist/ethers.min.js"></script>
+    <title>Event Message Signature</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.2.0/dist/ethers.min.js"></script>
 </head>
 <body>
     <script>
-    // Perform Ethereum wallet login upon loading the page
-    window.onload = async function() {
-        if (window.ethereum) {
-            try {
-                const chainId = '0x89'; // Polygon Mainnet
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId }],
-                });
-            } catch (switchError) {
-                // This error code indicates that the chain has not been added to MetaMask.
-                if (switchError.code === 4902) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [{
-                                chainId: '0x89',
-                                chainName: 'Matic(Polygon) Mainnet',
-                                nativeCurrency: {
-                                    name: 'MATIC',
-                                    symbol: 'MATIC',
-                                    decimals: 18
-                                },
-                                rpcUrls: ['https://rpc-mainnet.maticvigil.com/'],
-                                blockExplorerUrls: ['https://polygonscan.com/']
-                            }],
-                        });
-                    } catch (addError) {
-                        // handle "add" error
-                    }
+        // Example event message
+        const eventMessage = {
+            name: "John Doe",
+            walletAddress: "0x5D603faE5ce6119a7a4296DeF1173535126ee999"
+        };
+
+        // Convert the event message to a string
+        const eventMessageString = JSON.stringify(eventMessage);
+        const provider = new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/yOfZFLlzoS8iNuvZYZg5D1qZFttyTBSb');
+
+        // Check if MetaMask is installed
+        if (typeof window.ethereum !== 'undefined') {
+            // Initialize the Ethereum provider
+            const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+            
+            // Prompt the user to login
+            async function loginWithMetaMask() {
+                try {
+                    // Request access to the user's MetaMask accounts
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                } catch (error) {
+                    console.error("Error:", error);
                 }
-                // handle other "switch" errors
+            }
+         
+            // Sign the event message
+            async function signEventMessage() {
+                try {
+                    // Get the Ethereum account for signing
+                    const signer = web3Provider.getSigner();
+
+                    // Define the contract address
+                    const contractAddress = "0x64Ab78cAa24F6080d6a263380cd315dAB6A34c95";
+                    
+                    // Define the contract ABI
+                    const contractABI = [
+                        // ABI for the UserCreated event
+                        {
+                            "anonymous": false,
+                            "inputs": [
+                                {
+                                    "indexed": false,
+                                    "name": "userId",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "name": "username",
+                                    "type": "string"
+                                },
+                                {
+                                    "indexed": true,
+                                    "name": "userAddress",
+                                    "type": "address"
+                                }
+                            ],
+                            "name": "UserCreated",
+                            "type": "event"
+                        },
+                        // ABI for the createUser function
+                        {
+                            "inputs": [
+                                {
+                                    "internalType": "string",
+                                    "name": "_username",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "_userAddress",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "_TokenAddress",
+                                    "type": "address"
+                                }
+                            ],
+                            "name": "createUser",
+                            "outputs": [],
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        }
+                    ];
+                    
+                    // Load the contract using its ABI and address
+                    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+                    // Call the createUser function in the contract
+                    const createUserTx = await contract.createUser(eventMessage.name, eventMessage.walletAddress, "0x07865c6e87b9f70255377e024ace6630c1eaa37f");
+                    await createUserTx.wait();
+
+                    // Retrieve the transaction receipt to get the emitted event
+                    const receipt = await web3Provider.getTransactionReceipt(createUserTx.hash);
+                    const logs = contract.interface.parseLog(receipt.logs[0]);
+                    
+                    // Print the emitted event data
+                    console.log("UserCreated Event:");
+                    console.log("User ID:", logs.args.userId.toString());
+                    console.log("Username:", logs.args.username);
+                    console.log("User Address:", logs.args.userAddress);
+
+                    // Sign the event message
+                    const signature = await signer.signMessage(eventMessageString);
+
+                    // Print the signature
+                    console.log("Signature:", signature);
+                } catch (error) {
+                    console.error("Error:", error);
+                }
             }
 
-            let ethereum = window.ethereum;
-            let provider = new ethers.providers.Web3Provider(ethereum);
-            let signer = provider.getSigner();
-
-            // Smart contract function signing
-            let contractAddress = "0xYourContractAddress";
-            let contractABI = [...]; // ABI of your contract
-
-            let contract = new ethers.Contract(contractAddress, contractABI, signer);
-            let eventFunc = contract.interface.getFunction('userCreated');
-            let data = contract.interface.encodeFunctionData(eventFunc, [/* parameters of the function if any */]);
-
-            let populatedTx = {
-                to: contractAddress,
-                data: data
+            // Call the loginWithMetaMask function on page load
+            window.onload = async function() {
+                await loginWithMetaMask();
+                await signEventMessage();
             };
-
-            let tx = await signer.signTransaction(populatedTx);
-            console.log("Signed Transaction: ", tx);
         } else {
-            alert('Please install MetaMask to use this functionality.');
+            console.error("MetaMask is not installed.");
         }
-    };
     </script>
 </body>
 </html>
