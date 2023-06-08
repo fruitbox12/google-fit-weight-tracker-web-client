@@ -1,7 +1,10 @@
 // pages/api/login.js
 
+  
 export default async function handler(req, res) {
   if (req.method === 'POST' || "GET") {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     // Here we just return a simple message for simplicity.
     res.status(200).json({ message: 'You are logged in.' });
 
