@@ -21,18 +21,18 @@
   <script src="loadLibraries.js" type="application/javascript"></script>
 </head>
 <body>
-  <div id="g_id_onload"
-     data-client_id="72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse">
-  </div>
+<body>
+    <button id="login">Log in with Google</button>
 
-  <div class="g_id_signin" data-type="standard"></div>
-  
-  <script>
-    function handleCredentialResponse(response) {
-      console.log("Encoded JWT ID token: " + response.credential);
-    }
-  </script><!-- Using Threejs & Jerome Etienne's Threex -->
+    <script>
+    document.getElementById('login').onclick = function() {
+        var client_id = '72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com';
+        var redirect_uri = 'https://Upgoaled.vercel.app';
+        var scope = 'https://www.googleapis.com/auth/fitness.activity.read%20https://www.googleapis.com/auth/fitness.activity.write%20https://www.googleapis.com/auth/fitness.blood_glucose.read%20https://www.googleapis.com/auth/fitness.blood_glucose.write%20https://www.googleapis.com/auth/fitness.blood_pressure.read%20https://www.googleapis.com/auth/fitness.blood_pressure.write%20https://www.googleapis.com/auth/fitness.body.read%20https://www.googleapis.com/auth/fitness.body.write%20https://www.googleapis.com/auth/fitness.body_temperature.read%20https://www.googleapis.com/auth/fitness.body_temperature.write%20https://www.googleapis.com/auth/fitness.location.read%20https://www.googleapis.com/auth/fitness.location.write%20https://www.googleapis.com/auth/fitness.nutrition.read%20https://www.googleapis.com/auth/fitness.nutrition.write%20https://www.googleapis.com/auth/fitness.oxygen_saturation.read%20https://www.googleapis.com/auth/fitness.oxygen_saturation.write%20https://www.googleapis.com/auth/fitness.reproductive_health.read%20https://www.googleapis.com/auth/fitness.reproductive_health.write';
+        var url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${scope}&response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}`;
+        window.location.href = url;
+    };
+    </script>
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/build/three-min.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/examples/js/SimplexNoise.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/threex.terrain.js'></script>
