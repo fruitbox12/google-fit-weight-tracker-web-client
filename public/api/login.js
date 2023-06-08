@@ -6,29 +6,19 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', '*');
   res.setHeader('Access-Control-Allow-Headers', '*');
 
-  // Wait for the request body stream to finish and parse it as JSON
-  const body = await new Promise((resolve, reject) => {
-    let bodyChunks = [];
-    req.on('data', chunk => {
-      bodyChunks.push(chunk);
-    }).on('end', () => {
-      const rawBody = Buffer.concat(bodyChunks).toString();
-      try {
-        const parsedBody = JSON.parse(rawBody);
-        resolve(parsedBody);
-      } catch (e) {
-        reject(new Error('Invalid JSON'));
-      }
-    });
-  });
+  if (req.method === 'OPTIONS') { 
+    // Pre-flight request. Reply successfully:
+    return res.status(200).end();
+  }
 
-  const { userId } = body.userId;
+  const { userId } = req.body;
   const secretKey = 'your_secret_key'; // Replace this with your actual secret key
 
   if (req.method === 'POST') {
     if (!userId) {
       return res.status(400).json({ error: 'Invalid request' });
     }
+  }
 else if (req.method === 'GET') {
 
 
