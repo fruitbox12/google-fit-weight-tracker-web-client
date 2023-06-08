@@ -6,10 +6,7 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', '*');
   res.setHeader('Access-Control-Allow-Headers', '*');
 
-  if (req.method === 'OPTIONS') { 
-    // Pre-flight request. Reply successfully:
-    return res.status(200).end();
-  }
+
    let userId;
 
   if (req.method === 'POST') {
@@ -23,6 +20,7 @@ module.exports = async (req, res) => {
         try {
           const parsedBody = JSON.parse(rawBody);
           resolve(parsedBody);
+          res.status(200).end();
         } catch (e) {
           reject(new Error('Invalid JSON'));
         }
@@ -33,6 +31,7 @@ module.exports = async (req, res) => {
   } else if (req.method === 'GET') {
     // Get userId from query parameters for GET requests
     userId = "app";
+    res.status(200).end();
   }
 
   const secretKey = 'your_secret_key'; // Replace this with your actual secret key
@@ -40,10 +39,11 @@ module.exports = async (req, res) => {
 
 
   const token = jwt.sign({ id: userId }, secretKey, {
-    expiresIn: '1h', // token will expire in 1 hour
+    expiresIn: '1h' // token will expire in 1 hour
   });
 
   // If we're here, then the method is not allowed.
   res.setHeader('Allow', 'POST, GET, OPTIONS');
-  return res.status(405).end('Method Not Allowed');
+  return res.redirect(200, 'https://www.your-website.com/new-url');
+
 };
