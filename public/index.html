@@ -30,17 +30,42 @@
   </body>
         <div id="g_id_onload"
             data-client_id="72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com"
-             data-ux_mode="redirect"
+             data-ux_mode="popup"
+	     data-callback="handleCredentialResponse"
+
          data-login_uri="https://ugoaled.vercel.app/api/login">
     </div>
         <button id="login">Log in with Google</button>
 
     <script>
+  function handleCredentialResponse(response) {
+            const credential = response.credential;
+
+            // Send the credential to your server for verification and user session handling
+            fetch('https://ugoaled.vercel.app/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    credential: credential,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Handle successful login data here
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Handle error here
+            });
+        }
 
 
     document.getElementById('login').onclick = function() {
        var client_id = '72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com';
-        var redirect_uri = 'https://Upgoaled.vercel.app';
+        var redirect_uri = 'https://Upgoaled.vercel.app/login';
         var scope = 'https://www.googleapis.com/auth/fitness.activity.read%20https://www.googleapis.com/auth/fitness.activity.write%20https://www.googleapis.com/auth/fitness.blood_glucose.read%20https://www.googleapis.com/auth/fitness.blood_glucose.write%20https://www.googleapis.com/auth/fitness.blood_pressure.read%20https://www.googleapis.com/auth/fitness.blood_pressure.write%20https://www.googleapis.com/auth/fitness.body.read%20https://www.googleapis.com/auth/fitness.body.write%20https://www.googleapis.com/auth/fitness.body_temperature.read%20https://www.googleapis.com/auth/fitness.body_temperature.write%20https://www.googleapis.com/auth/fitness.location.read%20https://www.googleapis.com/auth/fitness.location.write%20https://www.googleapis.com/auth/fitness.nutrition.read%20https://www.googleapis.com/auth/fitness.nutrition.write%20https://www.googleapis.com/auth/fitness.oxygen_saturation.read%20https://www.googleapis.com/auth/fitness.oxygen_saturation.write%20https://www.googleapis.com/auth/fitness.reproductive_health.read%20https://www.googleapis.com/auth/fitness.reproductive_health.write';
         var url = `https://accounts.google.com/o/oauth2/v2/auth?scope=${scope}&response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}`;
         window.location.href = url;
