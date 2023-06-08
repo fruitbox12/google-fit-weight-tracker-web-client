@@ -21,18 +21,45 @@
   <script src="loadLibraries.js" type="application/javascript"></script>
 </head>
 <body>
-  <div id="g_id_onload"
-     data-client_id="72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse">
+  <div class="w-users-userformpagewrap">
+    <div class="w-users-usersignupformwrapper">
+      <form method="post" data-wf-user-form-type="signup">
+        <div class="w-users-userformheader">
+        </div>
+        <!-- Google Sign-In button -->
+        <div id="g_id_onload"
+             data-client_id="72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-nonce="replace_with_your_nonce_value"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
+        <!-- other form fields -->
+      </form>
+    </div>
   </div>
-
-  <div class="g_id_signin" data-type="standard"></div>
-  
   <script>
+    // add your JavaScript logic to handle the credential response
     function handleCredentialResponse(response) {
-      console.log("Encoded JWT ID token: " + response.credential);
+      // use the response.getBackchannelToken() to get the response token
+      // then send the token to your backend to verify and handle the user login
     }
-  </script><!-- Using Threejs & Jerome Etienne's Threex -->
+    
+    // add a callback to handle the sign-in process
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '72778325262-61s06kg575qdc75sj82nuvoh5bujpfu2.apps.googleusercontent.com',
+          fetch_basic_profile: false,
+          scope: 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.activity.write https://www.googleapis.com/auth/fitness.blood_glucose.read https://www.googleapis.com/auth/fitness.blood_glucose.write https://www.googleapis.com/auth/fitness.blood_pressure.read https://www.googleapis.com/auth/fitness.blood_pressure.write https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.body.write'
+        });
+        // Sign the user in, and then retrieve their ID.
+        auth2.signIn().then(function() {
+          console.log(auth2.currentUser.get().getId());
+        });
+      });
+    }
+  </script>><!-- Using Threejs & Jerome Etienne's Threex -->
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/build/three-min.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/examples/vendor/three.js/examples/js/SimplexNoise.js'></script>
 <script src='https://jeromeetienne.github.io/threex.terrain/threex.terrain.js'></script>
